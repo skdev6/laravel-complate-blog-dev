@@ -21,6 +21,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body p-0">
+          
           <table class="table table-striped">
             <thead>
               <tr>
@@ -41,11 +42,12 @@
                   <td>
                     <div class="btn-group" role="group" aria-label="Basic example">
                       <a href="{{route('category.edit', [$catitem->id])}}" type="button" class="btn btn-sm btn-primary py-2"><i class="fas fa-edit"></i></a>
-                      <form action="{{route('category.destroy', [$catitem->id])}}" class="btn btn-sm btn-danger">
+                      <form action="{{route('category.destroy', [$catitem->id])}}" class="btn btn-sm btn-danger" method="POST">
                         @method('DELETE')
-                        <button type="button" class="btn btn-danger p-0"><i class="fas fa-trash"></i></button>
+                        @csrf
+                        <button type="submit" class="btn btn-danger p-0"><i class="fas fa-trash"></i></button>
                       </form>
-                      <a href="{{route('category.show', [$catitem->id])}}" class="btn btn-sm btn-success py-2"><i class="fas fa-eye"></i></a>
+                      {{-- <a href="{{route('category.show', [$catitem->id])}}" class="btn btn-sm btn-success py-2"><i class="fas fa-eye"></i></a> --}}
                     </div>
                   </td>
                 </tr> 

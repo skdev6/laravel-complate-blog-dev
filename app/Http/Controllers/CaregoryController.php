@@ -74,9 +74,9 @@ class CaregoryController extends Controller
      */
     public function edit(Caregory $caregory, $id)
     {
-        $singlecategory = $caregory->where('id', '=', $id)->get(); 
-        // return view('admin.category.edit', compact('singlecategory'));
-        return $singlecategory;
+        $caregory = $caregory->where('id', '=', $id)->get()[0]; 
+        return view('admin.category.edit', compact('caregory'));
+        // return $singlecategory;
     } 
 
     /**
@@ -86,9 +86,25 @@ class CaregoryController extends Controller
      * @param  \App\Caregory  $caregory
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Caregory $caregory)
+    public function update(Request $request, Caregory $caregory, $id)
     {
-        //
+        $this->validate($request, [
+            'catname' => "required|unique:caregories,name, $caregory->name"
+        ],[
+            'required' => 'This is require field',
+            'unique' => 'Please keep a unique name cz it\'s already taken'
+        ]);
+
+        $caregory->where('id', '=', $id)->update([
+            'name'=> $request->catname,
+            'description'=> $request->catdes,
+            'slug'=> Str::slug($request->catname, '-'),
+        ]);
+
+        Session::flash('success', 'category Updated successfully'); 
+
+        return redirect()->route('category.index');
+        
     }
 
     /**
@@ -97,8 +113,13 @@ class CaregoryController extends Controller
      * @param  \App\Caregory  $caregory
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Caregory $caregory)
+    public function destroy(Caregory $caregory, $id)
     {
-        //
+        $catDelete = $caregory->where('id', '=', $id)->delete();
+        if($catDelete){
+            Session::flash("success", "Category Delete Successful");
+            return redirect()->back();
+        }
+        
     }
 }
