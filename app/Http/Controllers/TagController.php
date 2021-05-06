@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Tag;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 class TagController extends Controller
 {
     /**
@@ -26,7 +27,7 @@ class TagController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.tag.create');
     }
 
     /**
@@ -37,7 +38,16 @@ class TagController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       $this->validate($request, [
+        'tagname' => 'required|unique:tags,name'
+       ]); 
+       Tag::create([
+        'name' => $request->tagname,
+        'description' => $request->tagdes,
+        'slug' => Str::slug($request->tagname, '-'),
+       ]);
+       Session::flash('success', "Tag created successfully"); 
+       return redirect()->back();
     }
 
     /**
@@ -59,7 +69,7 @@ class TagController extends Controller
      */
     public function edit(Tag $tag)
     {
-        //
+        return view('admin.tag.edit', compact('tag'));
     }
 
     /**
@@ -71,7 +81,15 @@ class TagController extends Controller
      */
     public function update(Request $request, Tag $tag)
     {
-        //
+        $this->validate($request, [
+            'tagname' => "required|unique:tags,name, $tag->name"
+        ]); 
+        $tag->name = $request->tagname;
+        $tag->slug = Str::slug($request->tagname, '-');
+        $tag->description = $request->tagdes;
+        $tag->save();
+        Session::flash('success', 'Tag Updated Successfully');
+        return redirect()->route('tag.index'); 
     }
 
     /**
@@ -82,6 +100,10 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
-        //
+        if($tag){
+            $tag->delete();
+            Session::flash('success', 'Tag Delete Successfully');
+            return redirect()->route('tag.index'); 
+        }
     }
 }

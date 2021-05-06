@@ -33,7 +33,6 @@
               </tr>
             </thead>
             <tbody>
-              {{$categores->count()}}
               @if ($categores->count() > 0)
                 @foreach ($categores as $catitem)
                   <tr>
